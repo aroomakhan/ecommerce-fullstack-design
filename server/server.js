@@ -1,4 +1,3 @@
-// Final CORS Fix - April 3
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -13,7 +12,7 @@ const app = express();
 // 2. Middleware 
 // UPDATED: Added specific options to ensure Vercel/Browsers play nice
 app.use(cors({
-  origin: ["https://ecommerce-fullstack-design-drab.vercel.app", "http://localhost:5173"],
+  origin: ["https://ecommerce-fullstack-design-three-woad.vercel.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
