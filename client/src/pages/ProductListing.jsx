@@ -24,36 +24,40 @@ const ProductListing = ({ searchQuery, onSearch, addToSaved }) => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        // Get category from the URL (e.g., ?category=Electronics)
         const params = new URLSearchParams(location.search);
         const urlCategory = params.get('category') || ""; 
-        
-        // Use URL category if it exists, otherwise fall back to Sidebar state
         const categoryToUse = urlCategory || activeCategory;
 
-        // UPDATED: Build the API URL using the base variable
         let url = `${API_BASE_URL}/api/products?sort=${sortBy}`;
         
         if (searchQuery && searchQuery.trim() !== "") {
-          // If user typed in search bar, prioritize search
           url += `&search=${encodeURIComponent(searchQuery)}`;
         } else if (categoryToUse) {
-          // Otherwise use category
           url += `&category=${encodeURIComponent(categoryToUse)}`;
         }
 
         const res = await fetch(url);
         const data = await res.json();
-        setProducts(data);
+
+        // FIXED: Safety check to handle both Arrays and Objects
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else if (data && Array.isArray(data.products)) {
+          setProducts(data.products);
+        } else {
+          setProducts([]); // Fallback if data is weird
+        }
+
       } catch (err) {
         console.error("Fetch Error:", err);
+        setProducts([]); // Reset products on error
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [searchQuery, sortBy, activeCategory, location.search, API_BASE_URL]); // Listens to all changes
+  }, [searchQuery, sortBy, activeCategory, location.search, API_BASE_URL]);
 
   if (loading) {
     return (
