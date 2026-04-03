@@ -410,23 +410,47 @@ const SectionRecomended = () => {
   // ADDED: The flexible API link
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+  // useEffect(() => {
+  //   const fetchRecommended = async () => {
+  //     try {
+  //       // UPDATED: Now uses the base URL
+  //       const res = await fetch(`${API_BASE_URL}/api/products`);
+  //       const data = await res.json();
+  //       setItems(data.slice(0, 10)); 
+  //     } catch (err) {
+  //       console.error(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchRecommended();
+  // }, [API_BASE_URL]);
+
+  // if (loading) return <div className="w-[1180px] mx-auto py-10 text-center">Loading...</div>;
+
   useEffect(() => {
     const fetchRecommended = async () => {
       try {
-        // UPDATED: Now uses the base URL
         const res = await fetch(`${API_BASE_URL}/api/products`);
         const data = await res.json();
-        setItems(data.slice(0, 10)); 
+        
+        // FIXED: Safety check for data shape
+        let productsArray = [];
+        if (Array.isArray(data)) {
+          productsArray = data;
+        } else if (data && Array.isArray(data.products)) {
+          productsArray = data.products;
+        }
+
+        setItems(productsArray.slice(0, 10)); 
       } catch (err) {
-        console.error(err);
+        console.error("Home Page Fetch Error:", err);
       } finally {
         setLoading(false);
       }
     };
     fetchRecommended();
   }, [API_BASE_URL]);
-
-  if (loading) return <div className="w-[1180px] mx-auto py-10 text-center">Loading...</div>;
 
   return (
     <section className="w-[1180px] mx-auto mt-[30px] mb-[40px]">
