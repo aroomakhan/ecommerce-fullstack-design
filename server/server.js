@@ -12,7 +12,7 @@ const app = express();
 // 2. Middleware 
 // UPDATED: Added specific options to ensure Vercel/Browsers play nice
 app.use(cors({
-  origin: ["https://ecommerce-fullstack-design-coral-ten.vercel.app", "http://localhost:5173"],
+  origin: ["http://localhost:5173", "https://ecommerce-fullstack-design-coral-ten.vercel.app" ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
