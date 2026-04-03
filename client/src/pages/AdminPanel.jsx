@@ -1,8 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 
 const AdminPanel = () => {
   const [products, setProducts] = useState([]);
   
+  // This line handles the "Phone Number" switch automatically!
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
   // Form State
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -15,7 +19,7 @@ const AdminPanel = () => {
 
   // Function to fetch products from backend
   const fetchProducts = () => {
-    fetch('http://localhost:5000/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => setProducts(data))
       .catch(err => console.error("Fetch error:", err));
@@ -31,8 +35,8 @@ const AdminPanel = () => {
     
     const productData = { name, price, image, category };
     const url = isEditing 
-      ? `http://localhost:5000/api/products/${editId}` 
-      : 'http://localhost:5000/api/products';
+      ? `${API_BASE_URL}/api/products/${editId}` 
+      : `${API_BASE_URL}/api/products`;
     
     const method = isEditing ? 'PUT' : 'POST';
 
@@ -49,7 +53,7 @@ const AdminPanel = () => {
         // Reset Form
         setIsEditing(false);
         setEditId(null);
-        setName(''); setName(''); setPrice(''); setImage(''); setCategory('');
+        setName(''); setPrice(''); setImage(''); setCategory('');
         
         // Refresh Table
         fetchProducts();
@@ -59,13 +63,13 @@ const AdminPanel = () => {
       }
     } catch (err) {
       console.error("Connection Error:", err);
-      alert("Backend is not responding. Check your terminal!");
+      alert("Backend is not responding. Check your connection!");
     }
   };
 
   const deleteProduct = async (id) => {
     if (window.confirm("Delete this product?")) {
-      await fetch(`http://localhost:5000/api/products/${id}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/products/${id}`, { method: 'DELETE' });
       setProducts(products.filter(p => p._id !== id));
     }
   };
@@ -86,7 +90,6 @@ const AdminPanel = () => {
     <div style={{ padding: '40px', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       <h1 style={{ textAlign: 'center' }}>Admin Dashboard</h1>
 
-      {/* --- DYNAMIC FORM (Changes title) --- */}
       <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', marginBottom: '40px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
         <h3 style={{ marginBottom: '15px' }}>
           {isEditing ? "Edit Product" : "Add New Product"}
@@ -114,7 +117,6 @@ const AdminPanel = () => {
         </form>
       </div>
 
-      {/* --- PRODUCT LIST TABLE --- */}
       <table style={{ width: '100%', backgroundColor: '#fff', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ backgroundColor: '#eee' }}>
@@ -137,8 +139,7 @@ const AdminPanel = () => {
                 >
                   Edit
                 </button>
-                {/* --- THE SEPARATOR LINE --- */}
-        <span style={{ color: '#ccc', margin: '0 5px' }}>|</span>
+                <span style={{ color: '#ccc', margin: '0 5px' }}>|</span>
                 <button 
                   onClick={() => deleteProduct(p._id)} 
                   style={{ color: 'red', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 'bold' }}

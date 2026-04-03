@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -19,12 +20,16 @@ const ProductDetails = ({ addToCart }) => {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ADDED: The flexible API link
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // UPDATED: Now uses the base URL for both calls
         const [prodRes, allRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/products/${id}`),
-          fetch(`http://localhost:5000/api/products`)
+          fetch(`${API_BASE_URL}/api/products/${id}`),
+          fetch(`${API_BASE_URL}/api/products`)
         ]);
         const prodData = await prodRes.json();
         const allData = await allRes.json();
@@ -38,7 +43,7 @@ const ProductDetails = ({ addToCart }) => {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, API_BASE_URL]);
 
   if (loading) return <div className="p-20 text-center font-['Inter']">Loading...</div>;
 
