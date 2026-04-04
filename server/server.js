@@ -12,7 +12,7 @@ const app = express();
 
 // app.use(cors());
 app.use(cors({
-  origin: ["https://ecommerce-frontend-zeta-smoky.vercel.app", "http://localhost:5173"],
+  origin: ["https://ecommerce-frontend-zeta-smoky.vercel.app"],
   methods: ["POST", "GET", "PUT", "DELETE"],
   credentials: true
 }));
