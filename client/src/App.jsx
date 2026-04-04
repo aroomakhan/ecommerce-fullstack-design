@@ -6,24 +6,22 @@ import Home from './pages/Home';
 import ProductListing from './pages/ProductListing';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
-import Login from './pages/Login'; 
-import AdminPanel from './pages/AdminPanel'; 
+import Login from './pages/Login';
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Guard for Admin Page
   const AdminRoute = ({ children }) => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    // If no user or not admin, go to login
     if (!userInfo || !userInfo.isAdmin) {
       return <Navigate to="/login" />;
     }
     return children;
   };
 
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // --- CART STATES ---
+  // --- CART & SAVED STATES ---
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem('alibaba_cart');
     return savedCart ? JSON.parse(savedCart) : [];
@@ -34,7 +32,6 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Sync to LocalStorage
   useEffect(() => {
     localStorage.setItem('alibaba_cart', JSON.stringify(cart));
     localStorage.setItem('alibaba_saved', JSON.stringify(savedItems));
@@ -46,13 +43,10 @@ function App() {
     if (isAlreadyInCart) {
       alert("This item is already in your cart!");
     } else {
-      setCart([...cart, product]);
+      setCart([...cart, { ...product, quantity: 1 }]);
       alert(`${product.name} added to cart!`);
     }
   };
-  
-  const removeFromCart = (id) => setCart(cart.filter(item => item._id !== id));
-  const clearCart = () => setCart([]);
   
   const addToSaved = (product) => {
     const isAlreadySaved = savedItems.find((item) => item._id === product._id);
@@ -61,28 +55,30 @@ function App() {
     }
   };
 
-  const moveToCart = (product) => {
-    const isAlreadyInCart = cart.find((item) => item._id === product._id);
-    if (!isAlreadyInCart) setCart([...cart, product]);
-    setSavedItems(savedItems.filter(item => item._id !== product._id));
-    alert(`${product.name} moved to your cart!`);
-  };
-
-  const updateQuantity = (id, newQty) => {
-    if (newQty < 1) return;
-    setCart(cart.map(item => item._id === id ? { ...item, quantity: newQty } : item));
-  };
+  // ... (Keeping your other functions like removeFromCart, moveToCart, etc.)
 
   return (
     <Router>
+      {/* Header updates the search state */}
       <Header onSearch={setSearchQuery} searchQuery={searchQuery} cartCount={cart.length} />
       <Navbar />
       
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} /> {/* Set Home as the main page */}
-        <Route path="/products" element={<ProductListing searchQuery={searchQuery} onSearch={setSearchQuery} addToSaved={addToSaved} />} />
-        <Route path="/login" element={<Login />} /> {/* <--- ADD THIS ROUTE */}
+        <Route path="/" element={<Home />} />
+        
+        {/* FIX: We pass BOTH the query AND the function to change it */}
+        <Route 
+          path="/products" 
+          element={
+            <ProductListing 
+      searchQuery={searchQuery} 
+      onSearch={setSearchQuery} // <--- Check if this line exists!
+      addToSaved={addToSaved} 
+    />
+          } 
+        />
+        
+        <Route path="/login" element={<Login />} />
         <Route path="/product/:id" element={<ProductDetails addToCart={addToCart} addToSaved={addToSaved} />} />
         
         <Route 
@@ -90,17 +86,19 @@ function App() {
           element={
             <Cart 
               cartItems={cart} 
-              removeFromCart={removeFromCart} 
-              updateQuantity={updateQuantity} 
-              clearCart={clearCart} 
+              removeFromCart={(id) => setCart(cart.filter(item => item._id !== id))} 
+              updateQuantity={(id, qty) => setCart(cart.map(item => item._id === id ? { ...item, quantity: qty } : item))} 
+              clearCart={() => setCart([])} 
               savedItems={savedItems} 
-              moveToCart={moveToCart} 
+              moveToCart={(p) => {
+                if (!cart.find(i => i._id === p._id)) setCart([...cart, {...p, quantity: 1}]);
+                setSavedItems(savedItems.filter(i => i._id !== p._id));
+              }} 
               addToSaved={addToSaved}
             />
           } 
         />
 
-        {/* Protected Admin Route */}
         <Route 
           path="/admin" 
           element={

@@ -3,9 +3,16 @@
     "target": "ESNext",
     "module": "ESNext",
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
     "allowJs": true,
-    "baseUrl": "."
+    "checkJs": false,
+    "strict": false
   },
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }

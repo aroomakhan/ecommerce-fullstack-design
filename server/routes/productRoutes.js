@@ -1,92 +1,100 @@
+
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 
+// ... (Keep your GET routes as they are) ...
+// --- GET ALL PRODUCTS (With Search, Category, and Sort) ---
 router.get('/', async (req, res) => {
   try {
     const { category, search, sort } = req.query;
-    let query = {};
+    let queryObject = {};
 
-    // 1. Category Filter
-    if (category && category !== "") {
-      query.category = category;
-    }
+    // 1. Filter by Category
+    // 1. Filter by Category (Make it case-insensitive)
+if (category && category !== "") {
+  queryObject.category = { $regex: new RegExp(`^${category}$`, 'i') };
+}
 
-    // 2. Search Filter (Regex makes it "fuzzy" so 'sam' finds 'Samsung')
+    // 2. Search by Name (Case-insensitive)
     if (search && search !== "") {
-      query.name = { $regex: search, $options: 'i' }; 
+      queryObject.name = { $regex: search, $options: 'i' }; 
     }
+
+    // Build the Mongoose query
+    let apiQuery = Product.find(queryObject);
 
     // 3. Sorting Logic
-    let sortOption = {};
-    if (sort === 'price-low') sortOption = { price: 1 };
-    if (sort === 'price-high') sortOption = { price: -1 };
-    if (sort === 'newest') sortOption = { createdAt: -1 };
+    if (sort === 'price-low') {
+      apiQuery = apiQuery.sort({ price: 1 }); // Ascending
+    } else if (sort === 'price-high') {
+      apiQuery = apiQuery.sort({ price: -1 }); // Descending
+    } else {
+      apiQuery = apiQuery.sort({ createdAt: -1 }); // Default: Newest first
+    }
 
-    const products = await Product.find(query).sort(sortOption);
+    const products = await apiQuery;
+    
+    // Log for debugging (This helps you see what's happening in the terminal)
+    console.log(`Found ${products.length} products for query:`, queryObject);
+    
     res.json(products);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Server error: " + err.message });
   }
 });
 
-// Get single product by ID
+// --- GET SINGLE PRODUCT BY ID ---
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Not found" });
+    if (!product) return res.status(404).json({ message: "Product not found" });
     res.json(product);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Error fetching product" });
   }
 });
 
-// --- 1. ADD NEW PRODUCT (POST) ---
+// --- ADD NEW PRODUCT (POST) ---
 router.post('/', async (req, res) => {
   try {
-    const { name, price, image, category, description } = req.body;
-
-    // Create a new product instance using your Model
+    // Add 'stock' to the destructuring here
+    const { name, price, image, category, description, stock } = req.body; 
     const newProduct = new Product({
       name,
       price,
       image,
       category,
-      description: description || "No description provided" // Fallback if empty
+      stock: stock || 10, // Use provided stock or default to 10
+      description: description || "No description provided"
     });
-
     const savedProduct = await newProduct.save();
-    res.status(201).json(savedProduct); // 201 means "Created Successfully"
+    res.status(201).json(savedProduct);
   } catch (err) {
-    res.status(400).json({ message: "Failed to add product: " + err.message });
+    res.status(400).json({ message: "Failed to add: " + err.message });
   }
 });
 
-// Add this to your product routes in the backend:
+// --- EDIT PRODUCT (PUT) ---
 router.put('/:id', async (req, res) => {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id, 
       req.body, 
-      { new: true } // Returns the newly updated product
+      { new: true, runValidators: true } // runValidators ensures the new data is valid
     );
+    if (!updatedProduct) return res.status(404).json({ message: "Product not found" });
     res.json(updatedProduct);
   } catch (err) {
-    res.status(500).json({ message: "Update failed" });
+    res.status(500).json({ message: "Update failed: " + err.message });
   }
 });
 
-
-// --- 2. DELETE PRODUCT (DELETE) ---
+// --- DELETE PRODUCT (DELETE) ---
 router.delete('/:id', async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
     res.json({ message: "Product removed successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error: " + err.message });
@@ -94,11 +102,3 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
-
-
-
-

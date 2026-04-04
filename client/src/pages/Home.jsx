@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+
 import SaleItem from '../components/SaleItem';
 import BlockItemsGroup from '../components/BlockItemsGroup';
 import BlockItemsElectronics from '../components/BlockItemsElectronics';
@@ -346,54 +347,51 @@ const SectionInquiry = () => {
 
       {/* RIGHT SIDE: Form-block */}
       <div 
-        className="relative z-10 w-[491px] h-[346px] flex flex-col pt-[22px] px-[20px] pb-[25px] rounded-[6px] shadow-lg"
-        style={{ 
-          backgroundImage: `url(${BgCardSVG})`,
-          backgroundSize: '100% 100%'
-        }}
-      >
-        <h3 className="font-['Inter'] font-semibold text-[20px] leading-[28px] tracking-[-0.2px] text-[#1C1C1C] mb-[18px]">
-          Send quote to suppliers
-        </h3>
-
-        <div className="flex flex-col gap-[16px]">
-          <input 
-            type="text"
-            placeholder="What item do you need?"
-            className="w-[440px] h-[40px] px-[10px] border border-[#DEE2E7] rounded-[6px] text-[16px] placeholder-[#8B96A5] focus:outline-none focus:border-[#127FFF]"
-          />
-
-          <div className="relative w-[440px] h-[73px]">
-            <textarea 
-              placeholder="Type more details"
-              className="w-full h-full p-[11px] border border-[#DEE2E7] rounded-[6px] text-[16px] placeholder-[#8B96A5] focus:outline-none focus:border-[#127FFF] resize-none overflow-hidden"
-            />
-            <img src={ResizerIcon} alt="" className="absolute bottom-[6px] right-[6px] w-[8px] h-[8px]" />
-          </div>
-
-          <div className="flex gap-[8px]">
-            <input 
-              type="text" 
-              placeholder="Quantity"
-              className="w-[206px] h-[40px] px-[10px] border border-[#DEE2E7] rounded-[6px] text-[16px] focus:outline-none"
-            />
-            <div className="relative w-[111px] h-[40px]">
-              <select className="w-full h-full appearance-none bg-white border border-[#DEE2E7] rounded-[6px] pl-[10px] pr-[35px] text-[16px] cursor-pointer focus:outline-none">
-                <option>Pcs</option>
-                <option>Kg</option>
-              </select>
-              <img src={ExpandMoreIcon} alt="" className="absolute right-[8px] top-1/2 -translate-y-1/2 w-[24px] h-[24px] pointer-events-none" />
-            </div>
-          </div>
-        </div>
-
-        <button 
-          className="mt-[20px] w-[128px] h-[40px] rounded-[6px] text-white font-medium text-[16px] transition-all hover:brightness-110 active:scale-95"
-          style={{ background: 'linear-gradient(180deg, #127FFF 0%, #0067FF 100%)' }}
+  className="relative z-10 max-w-[491px] w-full h-auto min-h-[346px] flex flex-col pt-[22px] px-[20px] pb-[25px] rounded-[6px] shadow-lg bg-white"
+  /* Removed the style object with the backgroundImage */
 >
-          Send inquiry
-        </button>
+  <h3 className="font-['Inter'] font-semibold text-[20px] leading-[28px] tracking-[-0.2px] text-[#1C1C1C] mb-[18px]">
+    Send quote to suppliers
+  </h3>
+
+  <div className="flex flex-col gap-[16px]">
+    <input 
+      type="text"
+      placeholder="What item do you need?"
+      className="max-w-[440px] w-full h-[40px] px-[10px] border border-[#DEE2E7] rounded-[6px] text-[16px] placeholder-[#8B96A5] focus:outline-none focus:border-[#127FFF]"
+    />
+
+    <div className="relative max-w-[440px] w-full h-[73px]">
+      <textarea 
+        placeholder="Type more details"
+        className="w-full h-full p-[11px] border border-[#DEE2E7] rounded-[6px] text-[16px] placeholder-[#8B96A5] focus:outline-none focus:border-[#127FFF] resize-none overflow-hidden"
+      />
+      <img src={ResizerIcon} alt="" className="absolute bottom-[6px] right-[6px] w-[8px] h-[8px]" />
+    </div>
+
+    <div className="flex flex-wrap gap-[8px]">
+      <input 
+        type="text" 
+        placeholder="Quantity"
+        className="w-[206px] h-[40px] px-[10px] border border-[#DEE2E7] rounded-[6px] text-[16px] focus:outline-none"
+      />
+      <div className="relative w-[111px] h-[40px]">
+        <select className="w-full h-full appearance-none bg-white border border-[#DEE2E7] rounded-[6px] pl-[10px] pr-[35px] text-[16px] cursor-pointer focus:outline-none">
+          <option>Pcs</option>
+          <option>Kg</option>
+        </select>
+        <img src={ExpandMoreIcon} alt="" className="absolute right-[8px] top-1/2 -translate-y-1/2 w-[24px] h-[24px] pointer-events-none" />
       </div>
+    </div>
+  </div>
+
+  <button 
+    className="mt-[20px] w-[128px] h-[40px] rounded-[6px] text-white font-medium text-[16px] transition-all hover:brightness-110 active:scale-95"
+    style={{ background: 'linear-gradient(180deg, #127FFF 0%, #0067FF 100%)' }}
+  >
+    Send inquiry
+  </button>
+</div>
 
     </section>
   );
@@ -407,62 +405,42 @@ const SectionRecomended = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // ADDED: The flexible API link
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
-  // useEffect(() => {
-  //   const fetchRecommended = async () => {
-  //     try {
-  //       // UPDATED: Now uses the base URL
-  //       const res = await fetch(`${API_BASE_URL}/api/products`);
-  //       const data = await res.json();
-  //       setItems(data.slice(0, 10)); 
-  //     } catch (err) {
-  //       console.error(err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchRecommended();
-  // }, [API_BASE_URL]);
-
-  // if (loading) return <div className="w-[1180px] mx-auto py-10 text-center">Loading...</div>;
+  // 1. FIX: You must define this variable if you aren't importing it 
+  const API_BASE_URL = 'http://localhost:5000';
 
   useEffect(() => {
     const fetchRecommended = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/products`);
+        // 2. Fetching from your actual backend
+        const res = await fetch(`${API_BASE_URL}/api/products`); 
         const data = await res.json();
         
-        // FIXED: Safety check for data shape
-        let productsArray = [];
-        if (Array.isArray(data)) {
-          productsArray = data;
-        } else if (data && Array.isArray(data.products)) {
-          productsArray = data.products;
-        }
-
-        setItems(productsArray.slice(0, 10)); 
+        // Take 10 items for the "Recommended" grid as per Alibaba design
+        setItems(data.slice(0, 10)); 
       } catch (err) {
-        console.error("Home Page Fetch Error:", err);
+        console.error("Failed to fetch recommended items:", err);
       } finally {
         setLoading(false);
       }
     };
     fetchRecommended();
-  }, [API_BASE_URL]);
+  }, []);
+
+  if (loading) return <div className="text-center py-10">Loading recommendations...</div>;
 
   return (
-    <section className="w-[1180px] mx-auto mt-[30px] mb-[40px]">
-      <h2 className="font-['Inter'] font-semibold text-[24px] text-[#1C1C1C] mb-[24px]">
+    /* 3. RESPONSIVE FIX: Changed w-[1180px] to max-w-[1180px] and added padding for mobile */
+    <section className="max-w-[1180px] w-[95%] mx-auto mt-[30px] mb-[40px]">
+      <h2 className="font-['Inter'] font-semibold text-[20px] md:text-[24px] text-[#1C1C1C] mb-[24px]">
         Recommended items
       </h2>
-
-      {/* THE GRID: 5 columns*/}
-      <div className="grid grid-cols-5 gap-[20px]">
+      
+      {/* 4. RESPONSIVE GRID: grid-cols-2 for mobile, grid-cols-3 for tablets, grid-cols-5 for desktop */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[10px] md:gap-[20px]">
         {items.map((product) => (
           <ItemHomeSm 
             key={product._id}
+            // 5. Ensure props match exactly what your ItemHomeSm component expects
             title={`$${product.price}`} 
             info={product.name}    
             image={product.image}  

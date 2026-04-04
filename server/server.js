@@ -4,37 +4,18 @@ const cors = require('cors');
 require('dotenv').config();
 
 // 1. Import Routes
-const productRoutes = require('./routes/productRoutes');
-const authRoutes = require('./routes/authRoutes'); 
+const productRoutes = require('./routes/productRoutes');const authRoutes = require('./routes/authRoutes'); // Added this
 
 const app = express();
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://ecommerce-fullstack-design-coral-ten.vercel.app' 
-];
+// 2. Middleware (Must come BEFORE routes)
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // If there's no origin (like a direct browser hit to the API link), allow it
-    if (!origin) return callback(null, true);
-    
-    // Check if the origin is in our list
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('CORS blocked'), false);
-    }
-  },
-  credentials: true
-}));
-
-
-app.use(express.json()); 
+app.use(cors());
+app.use(express.json()); // This only needs to be here once
 
 // 3. Use Routes
 app.use('/api/products', productRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes); // Moved this up here
 
 // 4. Test Route
 app.get('/', (req, res) => {
@@ -43,19 +24,12 @@ app.get('/', (req, res) => {
 
 // 5. Database Connection
 const MONGO_URI = process.env.MONGO_URI;
-
 mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected Successfully!"))
   .catch((err) => console.log("❌ MongoDB Connection Error:", err));
-// 6. Start the Server
+
+// 6. Start the Server (Always at the very bottom)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is listening on http://localhost:${PORT}`);
 });
-
-
-
-
-
-
-module.exports = app;
