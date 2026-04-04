@@ -23,7 +23,10 @@ const ProductListing = ({ searchQuery, onSearch, addToSaved }) => {
       setLoading(true);
       try {
         // Use location.search to stay in sync with the URL
-        const response = await axios.get(`http://localhost:5000/api/products${location.search}`);
+        // const response = await axios.get(`http://localhost:5000/api/products${location.search}`);
+        // This tells the app: "Use the URL from the .env file"
+
+const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products${location.search}`);
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);

@@ -412,7 +412,8 @@ const SectionRecomended = () => {
     const fetchRecommended = async () => {
       try {
         // 2. Fetching from your actual backend
-        const res = await fetch(`${API_BASE_URL}/api/products`); 
+        // const res = await fetch(`${API_BASE_URL}/api/products`); 
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products`);
         const data = await res.json();
         
         // Take 10 items for the "Recommended" grid as per Alibaba design

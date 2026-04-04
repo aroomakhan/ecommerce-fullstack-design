@@ -14,7 +14,8 @@ const AdminPanel = () => {
   const [editId, setEditId] = useState(null);
 
   const fetchProducts = () => {
-    fetch('http://localhost:5000/api/products')
+    // fetch('http://localhost:5000/api/products')
+    fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then(res => res.json())
       .then(data => setProducts(data))
       .catch(err => console.error("Fetch error:", err));
@@ -29,9 +30,10 @@ const AdminPanel = () => {
     
     // Include 'stock' in the data object sent to the backend
     const productData = { name, price, image, category, stock };
-    const url = isEditing 
-      ? `http://localhost:5000/api/products/${editId}` 
-      : 'http://localhost:5000/api/products';
+    // const url = isEditing 
+    //   ? `http://localhost:5000/api/products/${editId}` 
+    //   : 'http://localhost:5000/api/products';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/products/${editId}` : `${import.meta.env.VITE_API_URL}/api/products`;
     
     const method = isEditing ? 'PUT' : 'POST';
 

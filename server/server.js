@@ -10,7 +10,12 @@ const app = express();
 
 // 2. Middleware (Must come BEFORE routes)
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: ["https://ecommerce-frontend-zeta-smoky.vercel.app", "http://localhost:5173"],
+  methods: ["POST", "GET", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json()); // This only needs to be here once
 
 // 3. Use Routes
@@ -33,3 +38,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is listening on http://localhost:${PORT}`);
 });
+// At the bottom of your server file
+module.exports = app;
