@@ -22,11 +22,11 @@ const ProductListing = ({ searchQuery, onSearch, addToSaved }) => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        // Use location.search to stay in sync with the URL
-        // const response = await axios.get(`http://localhost:5000/api/products${location.search}`);
-        // This tells the app: "Use the URL from the .env file"
+      
+        console.log("API URL:", import.meta.env.VITE_API_URL);
 
 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products${location.search}`);
+
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -52,7 +52,7 @@ const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products${
       <Breadcrumb category={new URLSearchParams(location.search).get('category') || "All products"} />
 
       <div className="pb-[28px] mt-4 px-4"> 
-        {/* 3. RESPONSIVE FIX: Changed w-[1180px] to max-w-[1180px] and flex-col on mobile */}
+        
         <div className="max-w-[1180px] mx-auto flex flex-col md:flex-row gap-[28px] items-start">
           
           <div className="w-full md:w-[240px] flex-shrink-0">

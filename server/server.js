@@ -8,8 +8,8 @@ const productRoutes = require('./routes/productRoutes');const authRoutes = requi
 
 const app = express();
 
-// 2. Middleware (Must come BEFORE routes)
-
+// 2. Middleware 
+// , "http://localhost:5173/"
 // app.use(cors());
 app.use(cors({
   origin: ["https://ecommerce-frontend-alpha-cyan.vercel.app"],
