@@ -12,7 +12,7 @@ const app = express();
 // , "http://localhost:5173/"
 // app.use(cors());
 app.use(cors({
-  origin: ["https://ecommerce-frontend-alpha-cyan.vercel.app"],
+  origin: ["https://ecommerce-frontend-alpha-cyan.vercel.app", "https://ecommerce-fullstack-design-umber.vercel.app", "http://localhost:5173/"],
   methods: ["POST", "GET", "PUT", "DELETE"],
   credentials: true
 }));
